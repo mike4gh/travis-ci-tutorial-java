@@ -1,10 +1,13 @@
 language: java
 jdk:
- - oraclejdk8
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep_history: true
-  on:
-    branch: master
+  - oraclejdk8
+cache:
+  directories:
+    - ~/.m2
+
+install: true
+script: mvn -q -B --global-toolchains travis-maven-toolchain.xml clean install -DskipTests &&
+        mvn -B --global-toolchains travis-maven-toolchain.xml -pl :org.eclipse.birt.core.tests integration-test
+before_cache:
+  - rm -r ~/.m2/repository/org/eclipse/birt
+  - rm -r ~/.m2/repository/.cache/tycho
